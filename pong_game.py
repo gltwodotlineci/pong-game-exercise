@@ -22,6 +22,11 @@ class Ball:
         self.x_coord += self.dx
         self.y_coord += self.dy
 
+    def paddle_rebound(self):
+        self.dx = -self.dx
+
+    def wall_rebound(self):
+        self.dy = -self.dy
 
 
 class Paddle:
@@ -51,6 +56,30 @@ class Paddle:
         if self.y_coord >= (600-110):
             self.y_coord = 490
 
+class CollisionController:
+    def between_ball_left_paddle(self, ball, left_paddle):
+        if ball.y_coord + ball.radius > left_paddle.y_coord and ball.y_coord - ball.radius < left_paddle.y_coord + left_paddle.height:
+            if ball.x_coord - ball.radius <= left_paddle.x_coord + left_paddle.width:
+                return True
+
+        return False
+
+    def between_ball_right_paddle(self, ball, right_paddle):
+        if ball.y_coord + ball.radius > right_paddle.y_coord and ball.y_coord - ball.radius < right_paddle.y_coord + right_paddle.height:
+            if ball.x_coord - ball.radius >= right_paddle.x_coord:
+                return True
+
+        return False
+
+    def ball_wall_controll(self, ball):
+        if ball.y_coord - ball.radius <= 0:
+            return True
+
+        if ball.y_coord + ball.radius >= HEIGHT:
+            return True
+
+        return False
+
 
 pygame.init()
 
@@ -70,6 +99,7 @@ line_and_background()
 ball = Ball(screen, (255, 0, 0), WIDTH//2, HEIGHT//2, 10)
 left_paddle = Paddle(screen, (20,144,255), 15, HEIGHT//2-55, 15, 110)
 right_paddle = Paddle(screen, (255,255,0), 820, HEIGHT//2-55, 15, 110) # OR WIDTH-15-15
+rebound = CollisionController()
 
 playing = False
 
@@ -113,6 +143,17 @@ while True:
             right_paddle.clamp()
             right_paddle.show()
             right_paddle.move()
+
+            #check for rebound
+            if rebound.between_ball_left_paddle(ball, left_paddle):
+                ball.paddle_rebound()
+
+            if rebound.between_ball_right_paddle(ball, right_paddle):
+                ball.paddle_rebound()
+
+            if rebound.ball_wall_controll(ball):
+                ball.wall_rebound()
+
 
         pygame.display.update()
 
