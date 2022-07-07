@@ -81,6 +81,20 @@ class CollisionController:
         return False
 
 
+class Score:
+    def __init__(self, screen, points, x_coord, y_coord):
+        self.screen = screen
+        self.points = points
+        self.x_coord = x_coord
+        self.y_coord = y_coord
+        self.font = pygame.font.SysFont("monospace", 80, bold=True)
+        self.label = self.font.render(self.points, 0, (0,0,0))
+        self.show()
+
+    def show(self):
+        self.screen.blit(self.label, (self.x_coord - self.label.get_rect().width // 2, self.y_coord))
+
+
 pygame.init()
 
 WIDTH = 850
@@ -100,6 +114,8 @@ ball = Ball(screen, (255, 0, 0), WIDTH//2, HEIGHT//2, 10)
 left_paddle = Paddle(screen, (20,144,255), 15, HEIGHT//2-55, 15, 110)
 right_paddle = Paddle(screen, (255,255,0), 820, HEIGHT//2-55, 15, 110) # OR WIDTH-15-15
 rebound = CollisionController()
+score_left = Score(screen, '0', WIDTH//4,15)
+score_right = Score(screen, '0', WIDTH - WIDTH//4,15)
 
 playing = False
 
@@ -109,7 +125,7 @@ while True:
             sys.exit()
 
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_s:
+            if event.key == pygame.K_s and not playing:
                 ball.start_game()
                 playing = True
 
