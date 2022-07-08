@@ -28,6 +28,13 @@ class Ball:
     def wall_rebound(self):
         self.dy = -self.dy
 
+    def restart(self):
+        self.x_coord = WIDTH//2
+        self.y_coord = HEIGHT//2
+        self.dx = 0
+        self.dy = 0
+        self.show()
+
 
 class Paddle:
     def __init__(self, screen, color, x_coord, y_coord, width, height):
@@ -80,6 +87,13 @@ class CollisionController:
 
         return False
 
+    def win_padle_left(self, ball):
+        return ball.x_coord - ball.radius >= WIDTH
+
+    def win_padle_right(self, ball):
+        return ball.x_coord + ball.radius <= 0
+
+
 
 class Score:
     def __init__(self, screen, points, x_coord, y_coord):
@@ -93,6 +107,15 @@ class Score:
 
     def show(self):
         self.screen.blit(self.label, (self.x_coord - self.label.get_rect().width // 2, self.y_coord))
+
+    def keep_score(self):
+        points = int(self.points) + 1
+        self.points = str(points)
+        self.label = self.font.render(self.points, 0, (0,0,0))
+
+    def restart(self):
+        self.points = '0'
+        self.label = self.font.render(self.points, 0, (0,0,0))
 
 
 pygame.init()
@@ -128,6 +151,10 @@ while True:
             if event.key == pygame.K_s and not playing:
                 ball.start_game()
                 playing = True
+
+        #if event.key == pygame.K_r and playing:
+        #        restart()
+        #        playing = False
 
             if event.key == pygame.K_a:
                 left_paddle.state = 'up'
@@ -170,6 +197,20 @@ while True:
             if rebound.ball_wall_controll(ball):
                 ball.wall_rebound()
 
+            #check Win
+            if rebound.win_padle_left(ball):
+                score_left.keep_score()
+                ball.restart()
+
+            if rebound.win_padle_right(ball):
+                score_right.keep_score()
+                ball.restart()
+
+
+
+
+        score_left.show()
+        score_right.show()
 
         pygame.display.update()
 
