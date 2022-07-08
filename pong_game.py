@@ -148,7 +148,7 @@ while True:
             sys.exit()
 
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_s and not playing:
+            if event.key == pygame.K_s:
                 ball.start_game()
                 playing = True
 
