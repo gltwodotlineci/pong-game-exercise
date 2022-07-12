@@ -20,13 +20,13 @@ class CollisionController:
         if ball.y_coord - ball.radius <= 0:
             return True
 
-        if ball.y_coord + ball.radius >= HEIGHT:
+        if ball.y_coord + ball.radius >= 600:
             return True
 
         return False
 
     def win_padle_left(self, ball):
-        return ball.x_coord - ball.radius >= WIDTH
+        return ball.x_coord - ball.radius >= 850
 
     def win_padle_right(self, ball):
         return ball.x_coord + ball.radius <= 0
